@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComPortManager", "ComPortManager\ComPortManager.csproj", "{93D3FAB0-3C5D-43E5-A1BE-8EDCC383F78B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComPortManager.Tests", "ComPortManager.Tests\ComPortManager.Tests.csproj", "{43DBA908-7F82-4F7B-92CA-BBFF62552457}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{93D3FAB0-3C5D-43E5-A1BE-8EDCC383F78B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93D3FAB0-3C5D-43E5-A1BE-8EDCC383F78B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93D3FAB0-3C5D-43E5-A1BE-8EDCC383F78B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93D3FAB0-3C5D-43E5-A1BE-8EDCC383F78B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43DBA908-7F82-4F7B-92CA-BBFF62552457}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43DBA908-7F82-4F7B-92CA-BBFF62552457}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43DBA908-7F82-4F7B-92CA-BBFF62552457}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43DBA908-7F82-4F7B-92CA-BBFF62552457}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
