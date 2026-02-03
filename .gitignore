@@ -58,6 +58,7 @@ appsettings.local.json
 
 # Claude Code
 .claude/
+CLAUDE.md
 tmpclaude-*
 
 # Build outputs & artifacts
@@ -71,6 +72,17 @@ msix-publish/
 
 # MSIX certificates
 *.pfx
+
+# Build scripts (CI/CD handles builds now)
+build-installer.bat
+build-installer.ps1
+build-msix.ps1
+build-msix-sdk.ps1
+check-alias.ps1
+install-certificate.ps1
+
+# MSIX packaging (not used)
+StickyTerm.Package/
 
 # Misc
 nul
