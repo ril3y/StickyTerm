@@ -12,6 +12,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
@@ -33,3 +35,38 @@ jobs:
         name: StickyTerm-build
         path: StickyTerm/bin/Release/
         retention-days: 7
+
+  version-bump:
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, '[skip ci]')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Bump patch version
+      shell: bash
+      run: |
+        # Read current version from Directory.Build.props
+        CURRENT=$(grep -oP '(?<=<VersionPrefix>)[^<]+' Directory.Build.props)
+        echo "Current version: $CURRENT"
+
+        # Split into major.minor.patch
+        IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
+        PATCH=$((PATCH + 1))
+        NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+        echo "New version: $NEW_VERSION"
+
+        # Update Directory.Build.props
+        sed -i "s|<VersionPrefix>$CURRENT</VersionPrefix>|<VersionPrefix>$NEW_VERSION</VersionPrefix>|" Directory.Build.props
+
+        # Commit and push
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add Directory.Build.props
+        git commit -m "Bump version to $NEW_VERSION [skip ci]"
+        git push

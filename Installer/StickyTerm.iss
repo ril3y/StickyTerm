@@ -2,7 +2,14 @@
 ; https://jrsoftware.org/isinfo.php
 
 #define MyAppName "StickyTerm"
-#define MyAppVersion "1.0.0"
+; Version can be overridden via /DMyAppVersion=x.y.z on iscc command line
+#ifndef MyAppVersion
+  #define MyAppVersion "1.0.0"
+#endif
+; Architecture can be overridden via /DMyAppArch=arm64 on iscc command line
+#ifndef MyAppArch
+  #define MyAppArch "x64"
+#endif
 #define MyAppPublisher "StickyTerm"
 #define MyAppURL "https://github.com/ril3y/StickyTerm"
 #define MyAppExeName "StickyTerm.exe"
@@ -23,7 +30,7 @@ DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
 ; Output settings
 OutputDir=..\Output
-OutputBaseFilename=StickyTerm_Setup_{#MyAppVersion}
+OutputBaseFilename=StickyTerm_Setup_{#MyAppVersion}_{#MyAppArch}
 ; Compression
 Compression=lzma2/ultra64
 SolidCompression=yes
@@ -38,8 +45,13 @@ UninstallDisplayIcon={app}\{#MyAppExeName}
 VersionInfoVersion={#MyAppVersion}
 VersionInfoDescription={#MyAppDescription}
 ; Architecture
+#if MyAppArch == "arm64"
+ArchitecturesAllowed=arm64
+ArchitecturesInstallIn64BitMode=arm64
+#else
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
+#endif
 ; Uninstall
 UninstallDisplayName={#MyAppName}
 
@@ -52,7 +64,7 @@ Name: "startupicon"; Description: "Start {#MyAppName} when Windows starts"; Grou
 
 [Files]
 ; Main application files from publish folder
-Source: "..\publish\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\publish-{#MyAppArch}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

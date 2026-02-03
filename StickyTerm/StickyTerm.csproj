@@ -11,11 +11,10 @@
     <ApplicationIcon>Resources\app.ico</ApplicationIcon>
     <AssemblyName>StickyTerm</AssemblyName>
     <RootNamespace>StickyTerm</RootNamespace>
-    <Version>1.1.0</Version>
     <Authors>StickyTerm</Authors>
     <Description>StickyTerm - Serial terminal with sticky COM port assignments. Keep your USB serial devices on consistent ports.</Description>
     <Platforms>x64;AnyCPU</Platforms>
-    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+    <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
     <!-- Use custom Program.Main entry point instead of auto-generated -->
     <EnableDefaultApplicationDefinition>false</EnableDefaultApplicationDefinition>
   </PropertyGroup>
