@@ -15,9 +15,12 @@
     <!-- Accent Colors -->
     <SolidColorBrush x:Key="AccentBrush" Color="#00FF9D"/>
     <SolidColorBrush x:Key="AccentHoverBrush" Color="#33FFB5"/>
+    <SolidColorBrush x:Key="AccentForegroundBrush" Color="#0A0A0A"/>
     <SolidColorBrush x:Key="SuccessBrush" Color="#00FF9D"/>
     <SolidColorBrush x:Key="WarningBrush" Color="#C084FC"/>
+    <SolidColorBrush x:Key="WarningForegroundBrush" Color="#EDEDED"/>
     <SolidColorBrush x:Key="ErrorBrush" Color="#F44747"/>
+    <SolidColorBrush x:Key="ErrorForegroundBrush" Color="#EDEDED"/>
 
     <!-- Control Colors -->
     <SolidColorBrush x:Key="ButtonBackgroundBrush" Color="#1A1A1A"/>

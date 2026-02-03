@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 using StickyTerm.Models;
@@ -13,14 +14,20 @@ public class LogLevelToColorConverter : IValueConverter
         {
             return level switch
             {
-                LogLevel.Debug => new SolidColorBrush(Colors.Gray),
-                LogLevel.Info => new SolidColorBrush(Colors.Black),
-                LogLevel.Warning => new SolidColorBrush(Colors.Orange),
-                LogLevel.Error => new SolidColorBrush(Colors.Red),
-                _ => new SolidColorBrush(Colors.Black)
+                LogLevel.Debug => Application.Current.FindResource("SecondaryTextBrush") as Brush
+                                  ?? new SolidColorBrush(Colors.Gray),
+                LogLevel.Info => Application.Current.FindResource("PrimaryTextBrush") as Brush
+                                 ?? new SolidColorBrush(Colors.Black),
+                LogLevel.Warning => Application.Current.FindResource("WarningBrush") as Brush
+                                    ?? new SolidColorBrush(Colors.Orange),
+                LogLevel.Error => Application.Current.FindResource("ErrorBrush") as Brush
+                                  ?? new SolidColorBrush(Colors.Red),
+                _ => Application.Current.FindResource("PrimaryTextBrush") as Brush
+                     ?? new SolidColorBrush(Colors.Black)
             };
         }
-        return new SolidColorBrush(Colors.Black);
+        return Application.Current.FindResource("PrimaryTextBrush") as Brush
+               ?? new SolidColorBrush(Colors.Black);
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

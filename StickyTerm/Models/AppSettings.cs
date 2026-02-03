@@ -47,7 +47,7 @@ public partial class AppSettings : ObservableObject
     private bool _startWithWindows;
 
     [ObservableProperty]
-    private string _theme = "Light";
+    private string _theme = "Dark";
 
     [ObservableProperty]
     private double _windowWidth = 1200;

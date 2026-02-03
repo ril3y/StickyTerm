@@ -34,6 +34,7 @@
                             </Trigger>
                             <Trigger Property="IsDefault" Value="True">
                                 <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>

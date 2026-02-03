@@ -57,6 +57,7 @@
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
                                 <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter Property="Opacity" Value="0.5"/>
@@ -96,6 +97,7 @@
                             </Trigger>
                             <Trigger Property="IsChecked" Value="True">
                                 <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter Property="Opacity" Value="0.5"/>
@@ -218,6 +220,7 @@
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
                                 <Setter TargetName="Border" Property="Background" Value="{DynamicResource AccentBrush}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource AccentForegroundBrush}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -466,7 +469,7 @@
                             <Button Content="{Binding IsConnected, Converter={StaticResource BoolToConnectTextConverter}}"
                                     Command="{Binding ToggleConnectionCommand}"
                                     Padding="12,4" MinWidth="90" FontWeight="SemiBold"
-                                    Foreground="White"
+                                    Foreground="{Binding IsConnected, Converter={StaticResource BoolToConnectionColorConverter}, ConverterParameter=Foreground}"
                                     Background="{Binding IsConnected, Converter={StaticResource BoolToConnectionColorConverter}}"/>
                         </StackPanel>
                     </Border>
@@ -1013,7 +1016,7 @@
                                                            ToolTip="Click to copy, Ctrl+Click to open in browser"/>
                                                 <Border Background="{DynamicResource SuccessBrush}" CornerRadius="3" Padding="4,2" Margin="8,0,0,0"
                                                         Visibility="{Binding IsApiRunning, Converter={StaticResource BoolToVisibilityConverter}}">
-                                                    <TextBlock Text="Running" Foreground="White" FontSize="10"/>
+                                                    <TextBlock Text="Running" Foreground="{DynamicResource AccentForegroundBrush}" FontSize="10"/>
                                                 </Border>
                                             </StackPanel>
                                         </StackPanel>
@@ -1027,11 +1030,11 @@
                                         <StackPanel Orientation="Horizontal">
                                             <Border Background="{DynamicResource SuccessBrush}" CornerRadius="3" Padding="8,4"
                                                     Visibility="{Binding IsRunningAsAdmin, Converter={StaticResource BoolToVisibilityConverter}}">
-                                                <TextBlock Text="Running as Administrator" Foreground="White" FontWeight="SemiBold"/>
+                                                <TextBlock Text="Running as Administrator" Foreground="{DynamicResource AccentForegroundBrush}" FontWeight="SemiBold"/>
                                             </Border>
                                             <Border Background="{DynamicResource WarningBrush}" CornerRadius="3" Padding="8,4"
                                                     Visibility="{Binding IsRunningAsAdmin, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Invert}">
-                                                <TextBlock Text="Running as Standard User" Foreground="White" FontWeight="SemiBold"/>
+                                                <TextBlock Text="Running as Standard User" Foreground="{DynamicResource WarningForegroundBrush}" FontWeight="SemiBold"/>
                                             </Border>
                                             <TextBlock Text="  Port tracking requires administrator privileges"
                                                        Foreground="{DynamicResource SecondaryTextBrush}"
@@ -1064,12 +1067,12 @@
                     <Border Background="{DynamicResource SuccessBrush}" CornerRadius="3" Padding="6,2" Margin="0,0,12,0"
                             Visibility="{Binding IsRunningAsAdmin, Converter={StaticResource BoolToVisibilityConverter}}"
                             ToolTip="Running with administrator privileges - port tracking enabled">
-                        <TextBlock Text="Admin" Foreground="White" FontSize="10" FontWeight="SemiBold"/>
+                        <TextBlock Text="Admin" Foreground="{DynamicResource AccentForegroundBrush}" FontSize="10" FontWeight="SemiBold"/>
                     </Border>
                     <Border Background="{DynamicResource WarningBrush}" CornerRadius="3" Padding="6,2" Margin="0,0,12,0"
                             Visibility="{Binding IsRunningAsAdmin, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Invert}"
                             ToolTip="Running as standard user - port tracking will prompt for elevation">
-                        <TextBlock Text="User" Foreground="White" FontSize="10" FontWeight="SemiBold"/>
+                        <TextBlock Text="User" Foreground="{DynamicResource WarningForegroundBrush}" FontSize="10" FontWeight="SemiBold"/>
                     </Border>
                     <TextBlock Text="{Binding Devices.Count, StringFormat='{}{0} devices'}"
                                Foreground="{DynamicResource SecondaryTextBrush}" VerticalAlignment="Center" Margin="0,0,16,0"/>
