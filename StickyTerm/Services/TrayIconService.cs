@@ -22,7 +22,7 @@ public class TrayIconService : ITrayIconService
         try
         {
             iconSource = new System.Windows.Media.Imaging.BitmapImage(
-                new Uri("pack://application:,,,/Resources/app.ico"));
+                new Uri("pack://application:,,,/Resources/tray.ico"));
         }
         catch
         {
@@ -77,25 +77,28 @@ public class TrayIconService : ITrayIconService
         // Force-kill fallback if graceful shutdown hangs
         Task.Run(async () =>
         {
-            await Task.Delay(1500);
+            await Task.Delay(3000);
             Environment.Exit(0);
         });
 
         try
         {
-            // Dispose tray icon immediately on this thread so it disappears right away
-            var icon = _trayIcon;
-            _trayIcon = null;
-            if (icon != null)
-            {
-                icon.TrayMouseDoubleClick -= OnTrayDoubleClick;
-                icon.TrayRightMouseUp -= OnTrayRightClick;
-                icon.Dispose();
-            }
+            // Close context menu immediately
+            if (_trayIcon?.ContextMenu != null)
+                _trayIcon.ContextMenu.IsOpen = false;
 
-            // Then dispatch shutdown to UI thread (use BeginInvoke to avoid blocking)
-            Application.Current?.Dispatcher.BeginInvoke(() =>
+            // Defer exit to let the menu close visually before disposing
+            Application.Current?.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
             {
+                var icon = _trayIcon;
+                _trayIcon = null;
+                if (icon != null)
+                {
+                    icon.TrayMouseDoubleClick -= OnTrayDoubleClick;
+                    icon.TrayRightMouseUp -= OnTrayRightClick;
+                    icon.Dispose();
+                }
+
                 if (_mainWindow is MainWindow mainWin)
                 {
                     mainWin.ExitApplication();

@@ -10,16 +10,16 @@
         SizeToContent="WidthAndHeight"
         Topmost="True">
 
-    <Border CornerRadius="8" Background="#0A0A0A" BorderBrush="#2A2A2A" BorderThickness="1"
-            Effect="{StaticResource SplashShadow}">
-        <Grid>
-            <Image Source="pack://application:,,,/Resources/splash.png"
-                   Stretch="Uniform" MaxHeight="420" Margin="12"/>
-        </Grid>
-    </Border>
-
     <Window.Resources>
         <DropShadowEffect x:Key="SplashShadow" BlurRadius="20" ShadowDepth="0"
                           Opacity="0.6" Color="Black"/>
     </Window.Resources>
+
+    <Border CornerRadius="8" Background="#0A0A0A" BorderBrush="#2A2A2A" BorderThickness="1"
+            Effect="{StaticResource SplashShadow}">
+        <Grid>
+            <Image Source="pack://application:,,,/Resources/splash.png"
+                   Stretch="Uniform" MaxHeight="560" Margin="12"/>
+        </Grid>
+    </Border>
 </Window>

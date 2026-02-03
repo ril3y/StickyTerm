@@ -35,6 +35,7 @@
 
   <ItemGroup>
     <Resource Include="Resources\app.ico" />
+    <Resource Include="Resources\tray.ico" />
     <Resource Include="Resources\splash.png" />
   </ItemGroup>
 

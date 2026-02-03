@@ -85,12 +85,14 @@ public partial class App : Application
         // Check for command line arguments
         bool startMinimized = e.Args.Contains("--minimized");
 
-        // Show splash screen
+        // Show splash screen with minimum display time
         SplashWindow? splash = null;
+        DateTime splashShownAt = DateTime.MinValue;
         if (!startMinimized)
         {
             splash = new SplashWindow();
             splash.Show();
+            splashShownAt = DateTime.UtcNow;
             LogStartup("Splash screen shown");
         }
 
@@ -214,11 +216,27 @@ public partial class App : Application
                 LogStartup("Window shown");
             }
 
-            // Close splash screen
+            // Close splash screen after minimum display time
             if (splash != null)
             {
-                splash.Close();
-                LogStartup("Splash screen closed");
+                var elapsed = DateTime.UtcNow - splashShownAt;
+                var remaining = TimeSpan.FromSeconds(2) - elapsed;
+                if (remaining > TimeSpan.Zero)
+                {
+                    var timer = new DispatcherTimer { Interval = remaining };
+                    timer.Tick += (_, _) =>
+                    {
+                        timer.Stop();
+                        splash.Close();
+                        LogStartup("Splash screen closed (after delay)");
+                    };
+                    timer.Start();
+                }
+                else
+                {
+                    splash.Close();
+                    LogStartup("Splash screen closed");
+                }
             }
 
             LogStartup("=== Startup completed successfully ===");
