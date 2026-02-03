@@ -38,23 +38,26 @@
   </ItemGroup>
 
   <!--
-    Embed the application manifest into the apphost executable.
-    This is required for UAC elevation (requireAdministrator) to work in .NET Core/5+ applications.
-    The ApplicationManifest property only embeds the manifest in the DLL, not the native apphost EXE.
-    Windows UAC reads the manifest from the EXE, so we must embed it there using mt.exe.
+    Embed the application manifest into the apphost executable using mt.exe.
+    This ensures UAC elevation (requireAdministrator) works reliably.
+    If mt.exe is not found (e.g. CI without Windows SDK), the target is skipped
+    since dotnet publish handles manifest embedding for self-contained builds.
   -->
   <Target Name="EmbedManifestInAppHost" AfterTargets="Build" Condition="'$(ApplicationManifest)' != '' and Exists('$(OutputPath)$(AssemblyName).exe')">
     <PropertyGroup>
-      <!-- Find Windows SDK mt.exe - try common locations -->
+      <!-- Find Windows SDK mt.exe - try MSBuild properties first, then common locations -->
       <WindowsSdkBinPath Condition="Exists('$(WindowsSdkDir)bin\$(WindowsSDKVersion)x64\mt.exe')">$(WindowsSdkDir)bin\$(WindowsSDKVersion)x64\</WindowsSdkBinPath>
+      <WindowsSdkBinPath Condition="'$(WindowsSdkBinPath)' == '' and Exists('C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\mt.exe')">C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\</WindowsSdkBinPath>
       <WindowsSdkBinPath Condition="'$(WindowsSdkBinPath)' == '' and Exists('C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64\mt.exe')">C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64\</WindowsSdkBinPath>
+      <WindowsSdkBinPath Condition="'$(WindowsSdkBinPath)' == '' and Exists('C:\Program Files (x86)\Windows Kits\10\bin\10.0.22000.0\x64\mt.exe')">C:\Program Files (x86)\Windows Kits\10\bin\10.0.22000.0\x64\</WindowsSdkBinPath>
+      <WindowsSdkBinPath Condition="'$(WindowsSdkBinPath)' == '' and Exists('C:\Program Files (x86)\Windows Kits\10\bin\10.0.20348.0\x64\mt.exe')">C:\Program Files (x86)\Windows Kits\10\bin\10.0.20348.0\x64\</WindowsSdkBinPath>
       <WindowsSdkBinPath Condition="'$(WindowsSdkBinPath)' == '' and Exists('C:\Program Files (x86)\Windows Kits\10\bin\10.0.19041.0\x64\mt.exe')">C:\Program Files (x86)\Windows Kits\10\bin\10.0.19041.0\x64\</WindowsSdkBinPath>
       <WindowsSdkBinPath Condition="'$(WindowsSdkBinPath)' == '' and Exists('C:\Program Files (x86)\Windows Kits\10\bin\10.0.18362.0\x64\mt.exe')">C:\Program Files (x86)\Windows Kits\10\bin\10.0.18362.0\x64\</WindowsSdkBinPath>
-      <MtExePath>$(WindowsSdkBinPath)mt.exe</MtExePath>
+      <MtExePath Condition="'$(WindowsSdkBinPath)' != ''">$(WindowsSdkBinPath)mt.exe</MtExePath>
     </PropertyGroup>
-    <Error Condition="!Exists('$(MtExePath)')" Text="Cannot find mt.exe in Windows SDK. Please ensure Windows SDK is installed." />
-    <Exec Command="&quot;$(MtExePath)&quot; -manifest &quot;$(ProjectDir)$(ApplicationManifest)&quot; -outputresource:&quot;$(OutputPath)$(AssemblyName).exe&quot;;#1" />
-    <Message Importance="high" Text="Embedded UAC manifest into $(AssemblyName).exe" />
+    <Warning Condition="'$(MtExePath)' == '' or !Exists('$(MtExePath)')" Text="mt.exe not found — skipping manifest embedding. Install Windows SDK for local builds." />
+    <Exec Condition="'$(MtExePath)' != '' and Exists('$(MtExePath)')" Command="&quot;$(MtExePath)&quot; -manifest &quot;$(ProjectDir)$(ApplicationManifest)&quot; -outputresource:&quot;$(OutputPath)$(AssemblyName).exe&quot;;#1" />
+    <Message Condition="'$(MtExePath)' != '' and Exists('$(MtExePath)')" Importance="high" Text="Embedded UAC manifest into $(AssemblyName).exe" />
   </Target>
 
 </Project>
