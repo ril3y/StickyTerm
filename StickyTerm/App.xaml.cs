@@ -4,6 +4,7 @@ using System.Windows.Threading;
 using StickyTerm.Models;
 using StickyTerm.Services;
 using StickyTerm.ViewModels;
+using StickyTerm.Views;
 
 namespace StickyTerm;
 
@@ -83,6 +84,15 @@ public partial class App : Application
 
         // Check for command line arguments
         bool startMinimized = e.Args.Contains("--minimized");
+
+        // Show splash screen
+        SplashWindow? splash = null;
+        if (!startMinimized)
+        {
+            splash = new SplashWindow();
+            splash.Show();
+            LogStartup("Splash screen shown");
+        }
 
         try
         {
@@ -204,10 +214,18 @@ public partial class App : Application
                 LogStartup("Window shown");
             }
 
+            // Close splash screen
+            if (splash != null)
+            {
+                splash.Close();
+                LogStartup("Splash screen closed");
+            }
+
             LogStartup("=== Startup completed successfully ===");
         }
         catch (Exception ex)
         {
+            splash?.Close();
             LogStartup($"STARTUP EXCEPTION: {ex}");
             MessageBox.Show(
                 $"Failed to start StickyTerm:\n\n{ex.Message}\n\n{ex.StackTrace}",

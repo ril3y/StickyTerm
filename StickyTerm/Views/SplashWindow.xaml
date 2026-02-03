@@ -1,0 +1,25 @@
+<Window x:Class="StickyTerm.Views.SplashWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        WindowStartupLocation="CenterScreen"
+        ShowInTaskbar="False"
+        ResizeMode="NoResize"
+        SizeToContent="WidthAndHeight"
+        Topmost="True">
+
+    <Border CornerRadius="8" Background="#0A0A0A" BorderBrush="#2A2A2A" BorderThickness="1"
+            Effect="{StaticResource SplashShadow}">
+        <Grid>
+            <Image Source="pack://application:,,,/Resources/splash.png"
+                   Stretch="Uniform" MaxHeight="420" Margin="12"/>
+        </Grid>
+    </Border>
+
+    <Window.Resources>
+        <DropShadowEffect x:Key="SplashShadow" BlurRadius="20" ShadowDepth="0"
+                          Opacity="0.6" Color="Black"/>
+    </Window.Resources>
+</Window>

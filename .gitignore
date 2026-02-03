@@ -84,6 +84,9 @@ install-certificate.ps1
 # MSIX packaging (not used)
 StickyTerm.Package/
 
+# Source artwork (too large for repo)
+stickterm.png
+
 # Misc
 nul
 tools/
