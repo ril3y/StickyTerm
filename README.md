@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="StickyTerm/Resources/icon-256.png" alt="StickyTerm" width="256"/>
+  <img src="StickyTerm/Resources/splash.png" alt="StickyTerm" width="300"/>
 </p>
 
 <h1 align="center">StickyTerm</h1>
