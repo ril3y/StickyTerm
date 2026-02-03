@@ -1,0 +1,1088 @@
+<Window x:Class="StickyTerm.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:StickyTerm"
+        xmlns:converters="clr-namespace:StickyTerm.Converters"
+        xmlns:viewmodels="clr-namespace:StickyTerm.ViewModels"
+        xmlns:models="clr-namespace:StickyTerm.Models"
+        xmlns:behaviors="clr-namespace:StickyTerm.Behaviors"
+        mc:Ignorable="d"
+        Title="StickyTerm"
+        Icon="pack://application:,,,/Resources/app.ico"
+        Background="{DynamicResource WindowBackgroundBrush}"
+        Height="750" Width="1250"
+        MinHeight="500" MinWidth="900"
+        WindowStartupLocation="CenterScreen"
+        Loaded="Window_Loaded">
+
+    <Window.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <converters:StabilityToColorConverter x:Key="StabilityToColorConverter"/>
+        <converters:StabilityToTextConverter x:Key="StabilityToTextConverter"/>
+        <converters:LogLevelToColorConverter x:Key="LogLevelToColorConverter"/>
+        <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+        <converters:BoolToThemeTextConverter x:Key="BoolToThemeTextConverter"/>
+        <converters:BoolToConnectTextConverter x:Key="BoolToConnectTextConverter"/>
+        <converters:BoolToLedColorConverter x:Key="BoolToLedColorConverter"/>
+        <converters:InverseBoolConverter x:Key="InverseBoolConverter"/>
+        <converters:BoolToConnectionColorConverter x:Key="BoolToConnectionColorConverter"/>
+
+        <!-- Base TextBlock Style -->
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+        </Style>
+
+        <!-- Button Styles with Custom Template -->
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="{DynamicResource ButtonBackgroundBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="3"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource ButtonHoverBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="Button" x:Key="ToolbarButton" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="MinWidth" Value="80"/>
+        </Style>
+
+        <!-- ToggleButton Style with Custom Template -->
+        <Style TargetType="ToggleButton">
+            <Setter Property="Background" Value="{DynamicResource ButtonBackgroundBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="3"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource ButtonHoverBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- TextBox Style with Template -->
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="{DynamicResource InputBackgroundBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="CaretBrush" Value="{DynamicResource PrimaryTextBrush}"/>
+            <Setter Property="SelectionBrush" Value="{DynamicResource SelectionBrush}"/>
+            <Setter Property="Padding" Value="4,2"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="2">
+                            <ScrollViewer x:Name="PART_ContentHost" Margin="{TemplateBinding Padding}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ComboBox ToggleButton Template -->
+        <ControlTemplate x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="20"/>
+                </Grid.ColumnDefinitions>
+                <Border x:Name="Border" Grid.ColumnSpan="2"
+                        Background="{DynamicResource InputBackgroundBrush}"
+                        BorderBrush="{DynamicResource BorderBrush}"
+                        BorderThickness="1" CornerRadius="2"/>
+                <Border Grid.Column="0" Margin="1"
+                        Background="{DynamicResource InputBackgroundBrush}"/>
+                <Path x:Name="Arrow" Grid.Column="1"
+                      Fill="{DynamicResource PrimaryTextBrush}"
+                      HorizontalAlignment="Center" VerticalAlignment="Center"
+                      Data="M 0 0 L 4 4 L 8 0 Z"/>
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="Border" Property="Background" Value="{DynamicResource ButtonHoverBrush}"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <!-- ComboBox Style with Custom Template -->
+        <Style TargetType="ComboBox">
+            <Setter Property="Background" Value="{DynamicResource InputBackgroundBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="Padding" Value="4,2"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <ToggleButton x:Name="ToggleButton"
+                                          Template="{StaticResource ComboBoxToggleButton}"
+                                          Focusable="False"
+                                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                          ClickMode="Press"/>
+                            <ContentPresenter x:Name="ContentSite"
+                                              IsHitTestVisible="False"
+                                              Content="{TemplateBinding SelectionBoxItem}"
+                                              ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                              ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                              Margin="6,3,23,3"
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="Left"/>
+                            <Popup x:Name="Popup" Placement="Bottom"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   AllowsTransparency="True" Focusable="False"
+                                   PopupAnimation="Slide">
+                                <Grid x:Name="DropDown"
+                                      SnapsToDevicePixels="True"
+                                      MinWidth="{TemplateBinding ActualWidth}"
+                                      MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                    <Border x:Name="DropDownBorder"
+                                            Background="{DynamicResource PanelBackgroundBrush}"
+                                            BorderBrush="{DynamicResource BorderBrush}"
+                                            BorderThickness="1" CornerRadius="2"/>
+                                    <ScrollViewer Margin="2" SnapsToDevicePixels="True">
+                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                    </ScrollViewer>
+                                </Grid>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ComboBoxItem Style -->
+        <Style TargetType="ComboBoxItem">
+            <Setter Property="Background" Value="{DynamicResource PanelBackgroundBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+            <Setter Property="Padding" Value="6,4"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border x:Name="Border"
+                                Background="{TemplateBinding Background}"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="{DynamicResource SelectionBrush}"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="{DynamicResource AccentBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- CheckBox Style -->
+        <Style TargetType="CheckBox">
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+        </Style>
+
+        <!-- Separator Style -->
+        <Style TargetType="Separator">
+            <Setter Property="Background" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="Margin" Value="4,2"/>
+        </Style>
+
+        <!-- Expander Style -->
+        <Style TargetType="Expander">
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+        </Style>
+
+        <!-- ProgressBar Style -->
+        <Style TargetType="ProgressBar">
+            <Setter Property="Background" Value="{DynamicResource SecondaryBackgroundBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+        </Style>
+
+        <!-- Grid Style for backgrounds -->
+        <Style TargetType="Grid">
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+
+        <!-- TabControl Style with Custom Template -->
+        <Style TargetType="TabControl">
+            <Setter Property="Background" Value="{DynamicResource PanelBackgroundBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabControl">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <TabPanel Grid.Row="0" IsItemsHost="True" Background="{DynamicResource WindowBackgroundBrush}"/>
+                            <Border Grid.Row="1"
+                                    Background="{DynamicResource PanelBackgroundBrush}"
+                                    BorderBrush="{DynamicResource BorderBrush}"
+                                    BorderThickness="1">
+                                <ContentPresenter ContentSource="SelectedContent" Margin="8"/>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- TabItem Style with Custom Template -->
+        <Style TargetType="TabItem">
+            <Setter Property="Background" Value="{DynamicResource SecondaryBackgroundBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="Padding" Value="12,6"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabItem">
+                        <Border x:Name="Border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="1,1,1,0"
+                                Padding="{TemplateBinding Padding}"
+                                Margin="0,0,2,0">
+                            <ContentPresenter ContentSource="Header" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="{DynamicResource PanelBackgroundBrush}"/>
+                                <Setter TargetName="Border" Property="BorderThickness" Value="1,1,1,0"/>
+                                <Setter TargetName="Border" Property="Margin" Value="0,0,2,-1"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="{DynamicResource ButtonHoverBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- DataGrid Styles -->
+        <Style TargetType="DataGrid">
+            <Setter Property="Background" Value="{DynamicResource PanelBackgroundBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="RowBackground" Value="{DynamicResource PanelBackgroundBrush}"/>
+            <Setter Property="AlternatingRowBackground" Value="{DynamicResource DataGridAlternateBrush}"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="VerticalGridLinesBrush" Value="{DynamicResource BorderBrush}"/>
+        </Style>
+
+        <Style TargetType="DataGridRow">
+            <Setter Property="Background" Value="{DynamicResource PanelBackgroundBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource SelectionBrush}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="DataGridCell">
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource SelectionBrush}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="{DynamicResource SecondaryBackgroundBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+
+        <!-- ScrollViewer/ScrollBar -->
+        <Style TargetType="ScrollViewer">
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+
+        <!-- ScrollBar Thumb Style -->
+        <Style x:Key="ScrollBarThumbStyle" TargetType="Thumb">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Border Background="{DynamicResource ScrollBarThumbBrush}"
+                                CornerRadius="4"/>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource ScrollBarThumbHoverBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Vertical ScrollBar Style -->
+        <Style TargetType="ScrollBar">
+            <Setter Property="Background" Value="{DynamicResource ScrollBarBackgroundBrush}"/>
+            <Setter Property="Width" Value="12"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollBar">
+                        <Grid Background="{TemplateBinding Background}">
+                            <Track x:Name="PART_Track" IsDirectionReversed="True">
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource ScrollBarThumbStyle}"/>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="Orientation" Value="Horizontal">
+                    <Setter Property="Width" Value="Auto"/>
+                    <Setter Property="Height" Value="12"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ScrollBar">
+                                <Grid Background="{TemplateBinding Background}">
+                                    <Track x:Name="PART_Track" IsDirectionReversed="False">
+                                        <Track.Thumb>
+                                            <Thumb Style="{StaticResource ScrollBarThumbStyle}"/>
+                                        </Track.Thumb>
+                                    </Track>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Detail Panel Style -->
+        <Style TargetType="Border" x:Key="DetailPanelStyle">
+            <Setter Property="Background" Value="{DynamicResource SecondaryBackgroundBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12"/>
+        </Style>
+
+        <!-- RichTextBox Style for Terminal -->
+        <Style TargetType="RichTextBox">
+            <Setter Property="Background" Value="{DynamicResource InputBackgroundBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource PrimaryTextBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+            <Setter Property="CaretBrush" Value="{DynamicResource PrimaryTextBrush}"/>
+            <Setter Property="SelectionBrush" Value="{DynamicResource SelectionBrush}"/>
+            <Setter Property="Padding" Value="4,2"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Main Content -->
+        <TabControl Grid.Row="0" SelectedIndex="{Binding CurrentTab}" Margin="8">
+            <!-- Terminal Tab (First/Default) -->
+            <TabItem Header="Terminal" DataContext="{Binding Terminal}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Connection Bar -->
+                    <Border Grid.Row="0" Background="{DynamicResource SecondaryBackgroundBrush}"
+                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" Padding="8">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Port:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <ComboBox Width="100" ItemsSource="{Binding AvailablePorts}"
+                                      SelectedItem="{Binding SelectedPort}"
+                                      IsEnabled="{Binding IsConnected, Converter={StaticResource InverseBoolConverter}}"/>
+                            <Button Content="Refresh" Command="{Binding RefreshPortsCommand}"
+                                    Padding="8,4" Margin="4,0,0,0"
+                                    IsEnabled="{Binding IsConnected, Converter={StaticResource InverseBoolConverter}}"/>
+                            <Separator Margin="12,0"/>
+                            <Button Content="{Binding IsConnected, Converter={StaticResource BoolToConnectTextConverter}}"
+                                    Command="{Binding ToggleConnectionCommand}"
+                                    Padding="12,4" MinWidth="90" FontWeight="SemiBold"
+                                    Foreground="White"
+                                    Background="{Binding IsConnected, Converter={StaticResource BoolToConnectionColorConverter}}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Settings Bar -->
+                    <Border Grid.Row="1" Background="{DynamicResource SecondaryBackgroundBrush}"
+                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" Padding="8">
+                        <WrapPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,16,0">
+                                <TextBlock Text="Baud:" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                <ComboBox Width="80" ItemsSource="{Binding AvailableBaudRates}"
+                                          SelectedItem="{Binding Settings.BaudRate}"
+                                          IsEnabled="{Binding IsConnected, Converter={StaticResource InverseBoolConverter}}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,16,0">
+                                <TextBlock Text="Data:" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                <ComboBox Width="50" ItemsSource="{Binding AvailableDataBits}"
+                                          SelectedItem="{Binding Settings.DataBits}"
+                                          IsEnabled="{Binding IsConnected, Converter={StaticResource InverseBoolConverter}}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,16,0">
+                                <TextBlock Text="Stop:" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                <ComboBox Width="75" ItemsSource="{Binding AvailableStopBits}"
+                                          SelectedItem="{Binding Settings.StopBits}"
+                                          IsEnabled="{Binding IsConnected, Converter={StaticResource InverseBoolConverter}}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,16,0">
+                                <TextBlock Text="Parity:" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                <ComboBox Width="70" ItemsSource="{Binding AvailableParities}"
+                                          SelectedItem="{Binding Settings.Parity}"
+                                          IsEnabled="{Binding IsConnected, Converter={StaticResource InverseBoolConverter}}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Flow:" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                <ComboBox Width="130" ItemsSource="{Binding AvailableHandshakes}"
+                                          SelectedItem="{Binding Settings.Handshake}"
+                                          IsEnabled="{Binding IsConnected, Converter={StaticResource InverseBoolConverter}}"/>
+                            </StackPanel>
+                        </WrapPanel>
+                    </Border>
+
+                    <!-- Control Lines Bar -->
+                    <Border Grid.Row="2" Background="{DynamicResource SecondaryBackgroundBrush}"
+                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" Padding="8">
+                        <StackPanel Orientation="Horizontal">
+                            <ToggleButton Content="DTR" IsChecked="{Binding DtrState}"
+                                          Command="{Binding ToggleDtrCommand}"
+                                          Padding="8,4" MinWidth="50"
+                                          ToolTip="Data Terminal Ready - toggles the DTR line (triggers Arduino reset)"/>
+                            <ToggleButton Content="RTS" IsChecked="{Binding RtsState}"
+                                          Command="{Binding ToggleRtsCommand}"
+                                          Padding="8,4" MinWidth="50" Margin="4,0,0,0"
+                                          ToolTip="Request To Send - toggles the RTS line"/>
+                            <Separator Margin="12,0"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,12,0">
+                                <Ellipse Width="10" Height="10" Margin="0,0,4,0"
+                                         Fill="{Binding CtsState, Converter={StaticResource BoolToLedColorConverter}}"/>
+                                <TextBlock Text="CTS" VerticalAlignment="Center" ToolTip="Clear To Send"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,12,0">
+                                <Ellipse Width="10" Height="10" Margin="0,0,4,0"
+                                         Fill="{Binding DsrState, Converter={StaticResource BoolToLedColorConverter}}"/>
+                                <TextBlock Text="DSR" VerticalAlignment="Center" ToolTip="Data Set Ready"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <Ellipse Width="10" Height="10" Margin="0,0,4,0"
+                                         Fill="{Binding CdState, Converter={StaticResource BoolToLedColorConverter}}"/>
+                                <TextBlock Text="CD" VerticalAlignment="Center" ToolTip="Carrier Detect"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Terminal Output Area -->
+                    <Grid Grid.Row="3">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="180"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Background="{DynamicResource TerminalBackgroundBrush}"
+                                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                                Margin="0,0,8,0">
+                            <RichTextBox x:Name="TerminalRichTextBox"
+                                         IsReadOnly="True"
+                                         FontFamily="Consolas"
+                                         FontSize="12"
+                                         Background="Transparent"
+                                         Foreground="{DynamicResource TerminalTextBrush}"
+                                         BorderThickness="0"
+                                         VerticalScrollBarVisibility="Auto"
+                                         HorizontalScrollBarVisibility="Auto"
+                                         behaviors:AutoScrollBehavior.AutoScroll="{Binding Settings.AutoScroll}">
+                                <FlowDocument PageWidth="10000"/>
+                            </RichTextBox>
+                        </Border>
+
+                        <Border Grid.Column="1" Style="{StaticResource DetailPanelStyle}">
+                            <StackPanel>
+                                <TextBlock Text="Display Options" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                <CheckBox Content="Timestamps" IsChecked="{Binding Settings.ShowTimestamps}" Margin="0,4"/>
+                                <CheckBox Content="Hex Mode" IsChecked="{Binding Settings.HexMode}" Margin="0,4"/>
+                                <CheckBox Content="ANSI Colors" IsChecked="{Binding Settings.ParseAnsiCodes}" Margin="0,4"/>
+                                <CheckBox Content="Auto-scroll" IsChecked="{Binding Settings.AutoScroll}" Margin="0,4"/>
+                                <CheckBox Content="Local Echo" IsChecked="{Binding Settings.LocalEcho}" Margin="0,4"/>
+                                <Separator Margin="0,8"/>
+                                <TextBlock Text="Line Ending" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                                <ComboBox ItemsSource="{Binding AvailableLineEndings}"
+                                          SelectedItem="{Binding Settings.SendLineEnding}"/>
+                                <Separator Margin="0,12"/>
+                                <Button Content="Clear" Command="{Binding ClearTerminalCommand}" Padding="8,4" Margin="0,4"/>
+                                <Button Content="Copy All" Command="{Binding CopyTerminalOutputCommand}" Padding="8,4" Margin="0,4"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <!-- Input Area -->
+                    <Border Grid.Row="4" Background="{DynamicResource SecondaryBackgroundBrush}"
+                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Padding="8">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBox Grid.Column="0" Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}"
+                                     Padding="6" FontFamily="Consolas"
+                                     ToolTip="Enter text to send. Use Up/Down arrows for command history."
+                                     IsEnabled="{Binding IsConnected}">
+                                <TextBox.InputBindings>
+                                    <KeyBinding Key="Enter" Command="{Binding SendCommand}"/>
+                                    <KeyBinding Key="Up" Command="{Binding HistoryUpCommand}"/>
+                                    <KeyBinding Key="Down" Command="{Binding HistoryDownCommand}"/>
+                                </TextBox.InputBindings>
+                            </TextBox>
+                            <CheckBox Grid.Column="1" Content="Hex" IsChecked="{Binding SendAsHex}"
+                                      VerticalAlignment="Center" Margin="8,0"
+                                      ToolTip="Send input as hex bytes (e.g., 1B 5B 32 4A)"/>
+                            <Button Grid.Column="2" Content="Send" Command="{Binding SendCommand}"
+                                    Padding="16,6" FontWeight="SemiBold"
+                                    IsEnabled="{Binding IsConnected}"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- Terminal Status Bar -->
+                    <Border Grid.Row="5" Background="{DynamicResource StatusBarBackgroundBrush}"
+                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Padding="8,4">
+                        <DockPanel>
+                            <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+                                <TextBlock Text="{Binding StatusMessage}"
+                                           Foreground="{DynamicResource PrimaryTextBrush}"
+                                           VerticalAlignment="Center"/>
+                                <Button Content="×" Command="{Binding ClearStatusCommand}"
+                                        Padding="6,0" Margin="8,0,0,0" FontSize="14" FontWeight="Bold"
+                                        Background="Transparent" BorderThickness="0"
+                                        Foreground="{DynamicResource SecondaryTextBrush}"
+                                        ToolTip="Clear status message"
+                                        Cursor="Hand"/>
+                            </StackPanel>
+                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
+                                <TextBlock Text="RX:" Foreground="{DynamicResource SecondaryTextBrush}" Margin="0,0,4,0"/>
+                                <TextBlock Text="{Binding BytesReceived, StringFormat='{}{0:N0}'}"
+                                           Foreground="{DynamicResource PrimaryTextBrush}" Margin="0,0,16,0"/>
+                                <TextBlock Text="TX:" Foreground="{DynamicResource SecondaryTextBrush}" Margin="0,0,4,0"/>
+                                <TextBlock Text="{Binding BytesSent, StringFormat='{}{0:N0}'}"
+                                           Foreground="{DynamicResource PrimaryTextBrush}"/>
+                            </StackPanel>
+                        </DockPanel>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+            <!-- Port Manager Tab -->
+            <TabItem Header="Port Manager">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Port Manager Toolbar -->
+                    <Border Grid.Row="0" Background="{DynamicResource SecondaryBackgroundBrush}"
+                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" Padding="8">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="Scan Devices" Command="{Binding ScanDevicesCommand}"
+                                    Style="{StaticResource ToolbarButton}"
+                                    ToolTip="Scan for COM port devices"/>
+                            <Button Content="Apply Rules" Command="{Binding ApplyAllRulesCommand}"
+                                    Style="{StaticResource ToolbarButton}"
+                                    ToolTip="Apply all matching rules to devices (requires admin)"/>
+                            <Separator Margin="8,0"/>
+                            <Button Content="Export Rules" Command="{Binding ExportRulesCommand}"
+                                    Style="{StaticResource ToolbarButton}"/>
+                            <Button Content="Import Rules" Command="{Binding ImportRulesCommand}"
+                                    Style="{StaticResource ToolbarButton}"/>
+                            <Separator Margin="8,0"/>
+                            <TextBox Width="200" Padding="4"
+                                     Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"
+                                     ToolTip="Search devices by name, port, VID, PID, or serial"/>
+                            <TextBlock Text="Search" VerticalAlignment="Center" Margin="8,0,0,0"
+                                       Foreground="{DynamicResource SecondaryTextBrush}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Nested TabControl for Devices/Rules/Logs -->
+                    <TabControl Grid.Row="1" Margin="0,8,0,0">
+                        <!-- Devices Sub-Tab -->
+                        <TabItem Header="Devices">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="350"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Device List -->
+                    <DataGrid Grid.Column="0"
+                              ItemsSource="{Binding Devices}"
+                              SelectedItem="{Binding SelectedDevice}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              SelectionMode="Single"
+                              GridLinesVisibility="Horizontal"
+                              HeadersVisibility="Column"
+                              Margin="0,0,8,0">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="COM" Binding="{Binding ComPort}" Width="70"/>
+                            <DataGridTextColumn Header="Alias" Binding="{Binding UserAlias}" Width="120"
+                                                Foreground="{DynamicResource AccentBrush}"/>
+                            <DataGridTextColumn Header="Name" Binding="{Binding FriendlyName}" Width="*"/>
+                            <DataGridTextColumn Header="Type" Binding="{Binding DeviceType}" Width="120"/>
+                            <DataGridTextColumn Header="VID" Binding="{Binding Vid}" Width="60"/>
+                            <DataGridTextColumn Header="PID" Binding="{Binding Pid}" Width="60"/>
+                            <DataGridTextColumn Header="Serial" Binding="{Binding SerialNumber}" Width="100"/>
+                            <DataGridTemplateColumn Header="Status" Width="80">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Ellipse Width="12" Height="12"
+                                                 Fill="{Binding Stability, Converter={StaticResource StabilityToColorConverter}}"
+                                                 ToolTip="{Binding Stability, Converter={StaticResource StabilityToTextConverter}}"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <!-- Device Details Panel -->
+                    <Border Grid.Column="1" Style="{StaticResource DetailPanelStyle}"
+                            Visibility="{Binding SelectedDevice, Converter={StaticResource NullToVisibilityConverter}}">
+                        <ScrollViewer VerticalScrollBarVisibility="Hidden">
+                            <StackPanel DataContext="{Binding SelectedDevice}">
+                                <TextBlock Text="Device Details" FontWeight="Bold" FontSize="16" Margin="0,0,0,12"/>
+
+                                <TextBlock Text="COM Port" FontWeight="SemiBold"/>
+                                <TextBlock Text="{Binding ComPort}" Margin="0,0,0,8"/>
+
+                                <TextBlock Text="Alias" FontWeight="SemiBold"/>
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Grid.Column="0" Text="{Binding UserAlias, UpdateSourceTrigger=PropertyChanged}"
+                                             ToolTip="Enter a friendly name for this device (e.g., Meshtastic 1, GPS Module)"/>
+                                    <Button Grid.Column="1" Content="Save"
+                                            Command="{Binding DataContext.SaveAliasCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                            Padding="8,2" Margin="4,0,0,0"/>
+                                </Grid>
+
+                                <TextBlock Text="Friendly Name" FontWeight="SemiBold"/>
+                                <TextBlock Text="{Binding FriendlyName}" TextWrapping="Wrap" Margin="0,0,0,8"/>
+
+                                <TextBlock Text="Device Type" FontWeight="SemiBold"/>
+                                <TextBlock Text="{Binding DeviceType}" Margin="0,0,0,8"/>
+
+                                <TextBlock Text="USB Identifiers" FontWeight="SemiBold"/>
+                                <TextBlock Margin="0,0,0,8">
+                                    <Run Text="VID: "/><Run Text="{Binding Vid, Mode=OneWay}"/>
+                                    <Run Text="  PID: "/><Run Text="{Binding Pid, Mode=OneWay}"/>
+                                </TextBlock>
+
+                                <TextBlock Text="Serial Number" FontWeight="SemiBold"/>
+                                <TextBlock Text="{Binding SerialNumber, TargetNullValue='(none)'}" Margin="0,0,0,8"
+                                           Foreground="{Binding HasSerialNumber, Converter={StaticResource StabilityToColorConverter}}"/>
+
+                                <TextBlock Text="Tracking Method" FontWeight="SemiBold"/>
+                                <TextBlock Text="{Binding Stability, Converter={StaticResource StabilityToTextConverter}}"
+                                           Foreground="{Binding Stability, Converter={StaticResource StabilityToColorConverter}}"
+                                           Margin="0,0,0,8"
+                                           ToolTip="VID/PID tracking works great for single devices. Serial number helps distinguish multiple identical devices."/>
+
+                                <TextBlock Text="Driver" FontWeight="SemiBold"/>
+                                <TextBlock Text="{Binding Driver, TargetNullValue='(unknown)'}" Margin="0,0,0,8"/>
+
+                                <TextBlock Text="PnP Device ID" FontWeight="SemiBold"/>
+                                <TextBox Text="{Binding PnpDeviceId, Mode=OneWay}" IsReadOnly="True"
+                                         TextWrapping="Wrap" Background="Transparent" BorderThickness="0"
+                                         Margin="0,0,0,8"/>
+
+                                <Separator Margin="0,8"/>
+
+                                <!-- Quick Action - Track/Untrack This Port -->
+                                <Button Content="⭐ Track This Port"
+                                        Command="{Binding DataContext.TrackThisPortCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        Padding="12,8" Margin="0,4" FontWeight="Bold" FontSize="14"
+                                        ToolTip="Keep this device on its current COM port"
+                                        Visibility="{Binding DataContext.IsSelectedDeviceTracked, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Invert}"/>
+
+                                <Button Content="🚫 Untrack This Port"
+                                        Command="{Binding DataContext.UntrackThisPortCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        Padding="12,8" Margin="0,4" FontWeight="Bold" FontSize="14"
+                                        ToolTip="Stop tracking this device's COM port"
+                                        Visibility="{Binding DataContext.IsSelectedDeviceTracked, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                                <TextBlock Text="Creates a rule to always assign this device to its current port"
+                                           Foreground="{DynamicResource SecondaryTextBrush}" TextWrapping="Wrap"
+                                           FontSize="11" Margin="0,0,0,8"
+                                           Visibility="{Binding DataContext.IsSelectedDeviceTracked, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Invert}"/>
+
+                                <TextBlock Foreground="{DynamicResource SecondaryTextBrush}" TextWrapping="Wrap"
+                                           FontSize="11" Margin="0,0,0,8"
+                                           Visibility="{Binding DataContext.IsSelectedDeviceTracked, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <Run Text="This device is being tracked. It will always be assigned to "/><Run Text="{Binding DataContext.SelectedRule.TargetComPort, RelativeSource={RelativeSource AncestorType=Window}, Mode=OneWay, FallbackValue='its configured port'}"/><Run Text="."/>
+                                </TextBlock>
+
+                                <Separator Margin="0,8"/>
+
+                                <!-- Advanced Options -->
+                                <Expander Header="Advanced Options" IsExpanded="False">
+                                    <StackPanel Margin="0,8,0,0">
+                                        <TextBlock Text="Custom Target Port"/>
+                                        <Grid Margin="0,4,0,8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <ComboBox Grid.Column="0"
+                                                      ItemsSource="{Binding DataContext.AvailableComPorts, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                      SelectedItem="{Binding DataContext.SelectedTargetPort, RelativeSource={RelativeSource AncestorType=Window}}">
+                                                <ComboBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Text="{Binding StringFormat='COM{0}'}"/>
+                                                    </DataTemplate>
+                                                </ComboBox.ItemTemplate>
+                                            </ComboBox>
+                                            <Button Grid.Column="1" Content="Use Current"
+                                                    Command="{Binding DataContext.UseCurrentPortCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                    Padding="6,2" Margin="4,0,0,0"/>
+                                        </Grid>
+
+                                        <Button Content="Create Custom Rule"
+                                                Command="{Binding DataContext.CreateRuleFromDeviceCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                Padding="8,4" Margin="0,4"/>
+                                    </StackPanel>
+                                </Expander>
+
+                                <Separator Margin="0,8"/>
+
+                                <Button Content="Copy Device Info"
+                                        Command="{Binding DataContext.CopyDeviceInfoCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        Padding="8,4" Margin="0,4"/>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Border>
+
+                    <TextBlock Grid.Column="1" Text="Select a device to view details"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                               Foreground="{DynamicResource SecondaryTextBrush}"
+                               Visibility="{Binding SelectedDevice, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=Invert}"/>
+                </Grid>
+            </TabItem>
+
+            <!-- Rules Tab -->
+            <TabItem Header="Rules">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="350"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Rules List -->
+                    <DataGrid Grid.Column="0"
+                              ItemsSource="{Binding Rules}"
+                              SelectedItem="{Binding SelectedRule}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              SelectionMode="Single"
+                              GridLinesVisibility="Horizontal"
+                              Margin="0,0,8,0">
+                        <DataGrid.Columns>
+                            <DataGridCheckBoxColumn Header="" Binding="{Binding Enabled}" Width="30"/>
+                            <DataGridTextColumn Header="Device" Binding="{Binding Name}" Width="*"/>
+                            <DataGridTextColumn Header="VID" Binding="{Binding Vid}" Width="60"/>
+                            <DataGridTextColumn Header="PID" Binding="{Binding Pid}" Width="60"/>
+                            <DataGridTextColumn Header="Port" Binding="{Binding TargetComPort}" Width="70"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <!-- Rule Details Panel -->
+                    <Border Grid.Column="1" Style="{StaticResource DetailPanelStyle}"
+                            Visibility="{Binding SelectedRule, Converter={StaticResource NullToVisibilityConverter}}">
+                        <StackPanel DataContext="{Binding SelectedRule}">
+                            <TextBlock Text="Tracking Rule" FontWeight="Bold" FontSize="16" Margin="0,0,0,12"/>
+
+                            <CheckBox Content="Enabled" IsChecked="{Binding Enabled}" Margin="0,0,0,12"/>
+
+                            <TextBlock Text="Device Name" FontWeight="SemiBold"/>
+                            <TextBox Text="{Binding Name}" Margin="0,4,0,12"/>
+
+                            <TextBlock Text="Target COM Port" FontWeight="SemiBold"/>
+                            <TextBox Text="{Binding TargetComPort}" Margin="0,4,0,12"/>
+
+                            <Separator Margin="0,8"/>
+
+                            <TextBlock Text="Device Identifier" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                            <TextBlock Foreground="{DynamicResource SecondaryTextBrush}" Margin="0,0,0,4">
+                                <Run Text="VID: "/><Run Text="{Binding Vid, Mode=OneWay}"/>
+                                <Run Text="   PID: "/><Run Text="{Binding Pid, Mode=OneWay}"/>
+                            </TextBlock>
+                            <TextBlock Foreground="{DynamicResource SecondaryTextBrush}" Margin="0,0,0,12"
+                                       Visibility="{Binding SerialNumber, Converter={StaticResource NullToVisibilityConverter}}">
+                                <Run Text="Serial: "/><Run Text="{Binding SerialNumber, Mode=OneWay}"/>
+                            </TextBlock>
+
+                            <Separator Margin="0,8"/>
+
+                            <Button Content="🗑 Delete Rule"
+                                    Command="{Binding DataContext.DeleteRuleCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                    Padding="8,4" Margin="0,4"/>
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Grid.Column="1" Text="Select a rule to view details"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"
+                               Foreground="{DynamicResource SecondaryTextBrush}"
+                               Visibility="{Binding SelectedRule, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=Invert}"/>
+                </Grid>
+            </TabItem>
+
+            <!-- Logs Tab -->
+            <TabItem Header="Logs">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                        <Button Content="Export Logs" Command="{Binding ExportLogsCommand}"
+                                Style="{StaticResource ToolbarButton}"/>
+                        <Button Content="Clear" Command="{Binding ClearLogsCommand}"
+                                Style="{StaticResource ToolbarButton}"/>
+                    </StackPanel>
+
+                    <DataGrid Grid.Row="1"
+                              ItemsSource="{Binding LogEntries}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              SelectionMode="Single"
+                              GridLinesVisibility="Horizontal">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Time" Binding="{Binding FormattedTimestamp}" Width="160"/>
+                            <DataGridTemplateColumn Header="Level" Width="70">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Level}"
+                                                   Foreground="{Binding Level, Converter={StaticResource LogLevelToColorConverter}}"
+                                                   FontWeight="SemiBold"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="100"/>
+                            <DataGridTextColumn Header="Message" Binding="{Binding Message}" Width="*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+                        </TabItem>
+
+                        <!-- Settings Tab -->
+                        <TabItem Header="Settings">
+                            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                                <StackPanel Margin="16">
+                                    <TextBlock Text="Application Settings" FontWeight="Bold" FontSize="18" Margin="0,0,0,16"/>
+
+                                    <!-- System Tray Settings -->
+                                    <TextBlock Text="System Tray" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,8"/>
+                                    <Border Background="{DynamicResource SecondaryBackgroundBrush}"
+                                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                                            CornerRadius="4" Padding="12" Margin="0,0,0,16">
+                                        <StackPanel>
+                                            <CheckBox Content="Minimize to system tray instead of taskbar"
+                                                      IsChecked="{Binding MinimizeToTray}" Margin="0,4"
+                                                      ToolTip="When minimized or closed, hide the window and show only in system tray"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- Startup Settings -->
+                                    <TextBlock Text="Windows Startup" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,8"/>
+                                    <Border Background="{DynamicResource SecondaryBackgroundBrush}"
+                                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                                            CornerRadius="4" Padding="12" Margin="0,0,0,16">
+                                        <StackPanel>
+                                            <CheckBox Content="Start StickyTerm when Windows starts"
+                                                      IsChecked="{Binding StartWithWindows}" Margin="0,4"
+                                                      ToolTip="Automatically start minimized to system tray at Windows logon with admin privileges for port tracking"/>
+                                            <TextBlock Text="Starts minimized in the system tray. Creates a scheduled task that runs at logon with administrator privileges."
+                                                       Foreground="{DynamicResource SecondaryTextBrush}"
+                                                       FontSize="11" Margin="20,4,0,0" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- API Server Settings -->
+                                    <TextBlock Text="API Server" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,8"/>
+                                    <Border Background="{DynamicResource SecondaryBackgroundBrush}"
+                                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                                            CornerRadius="4" Padding="12" Margin="0,0,0,16">
+                                        <StackPanel>
+                                            <CheckBox Content="Enable local HTTP API server"
+                                                      IsChecked="{Binding ApiEnabled}" Margin="0,4"
+                                                      ToolTip="Start a local API server for AI assistants to query port information"/>
+                                            <TextBlock Text="Allows AI coding assistants (Claude, Copilot, etc.) to discover your COM ports and their aliases."
+                                                       Foreground="{DynamicResource SecondaryTextBrush}"
+                                                       FontSize="11" Margin="20,4,0,8" TextWrapping="Wrap"/>
+
+                                            <StackPanel Orientation="Horizontal" Margin="0,4">
+                                                <TextBlock Text="Port:" VerticalAlignment="Center" Width="50"/>
+                                                <TextBox Text="{Binding ApiPort}" Width="80" Margin="0,0,16,0"
+                                                         IsEnabled="{Binding ApiEnabled}"
+                                                         ToolTip="Changing port requires restart"/>
+                                                <CheckBox Content="Localhost only (recommended)"
+                                                          IsChecked="{Binding ApiLocalhostOnly}"
+                                                          IsEnabled="{Binding ApiEnabled}"
+                                                          VerticalAlignment="Center"
+                                                          ToolTip="Only accept connections from 127.0.0.1"/>
+                                            </StackPanel>
+
+                                            <StackPanel Orientation="Horizontal" Margin="0,8,0,0"
+                                                        Visibility="{Binding ApiEnabled, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                <TextBlock Text="API URL: " FontSize="11" VerticalAlignment="Center"
+                                                           Foreground="{DynamicResource SecondaryTextBrush}"/>
+                                                <TextBlock Text="{Binding ApiUrl}" FontSize="11" FontFamily="Consolas"
+                                                           Foreground="{DynamicResource AccentBrush}"
+                                                           Cursor="Hand" TextDecorations="Underline"
+                                                           MouseLeftButtonUp="ApiUrl_Click"
+                                                           ToolTip="Click to copy, Ctrl+Click to open in browser"/>
+                                                <Border Background="{DynamicResource SuccessBrush}" CornerRadius="3" Padding="4,2" Margin="8,0,0,0"
+                                                        Visibility="{Binding IsApiRunning, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                    <TextBlock Text="Running" Foreground="White" FontSize="10"/>
+                                                </Border>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- Admin Status -->
+                                    <TextBlock Text="Administrator Status" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,8"/>
+                                    <Border Background="{DynamicResource SecondaryBackgroundBrush}"
+                                            BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1"
+                                            CornerRadius="4" Padding="12" Margin="0,0,0,16">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Border Background="{DynamicResource SuccessBrush}" CornerRadius="3" Padding="8,4"
+                                                    Visibility="{Binding IsRunningAsAdmin, Converter={StaticResource BoolToVisibilityConverter}}">
+                                                <TextBlock Text="Running as Administrator" Foreground="White" FontWeight="SemiBold"/>
+                                            </Border>
+                                            <Border Background="{DynamicResource WarningBrush}" CornerRadius="3" Padding="8,4"
+                                                    Visibility="{Binding IsRunningAsAdmin, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Invert}">
+                                                <TextBlock Text="Running as Standard User" Foreground="White" FontWeight="SemiBold"/>
+                                            </Border>
+                                            <TextBlock Text="  Port tracking requires administrator privileges"
+                                                       Foreground="{DynamicResource SecondaryTextBrush}"
+                                                       VerticalAlignment="Center" Margin="8,0,0,0"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- About -->
+                                    <TextBlock Text="About" FontWeight="SemiBold" FontSize="14" Margin="0,0,0,8"/>
+                                    <Button Content="About StickyTerm..."
+                                            Command="{Binding ShowAboutCommand}"
+                                            Padding="12,8" HorizontalAlignment="Left"/>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </TabItem>
+                    </TabControl>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <!-- Status Bar -->
+        <Border Grid.Row="1" Background="{DynamicResource SecondaryBackgroundBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Padding="8,4">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Left" Text="{Binding StatusMessage}" Foreground="{DynamicResource PrimaryTextBrush}" VerticalAlignment="Center"/>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <ProgressBar Width="100" Height="16" IsIndeterminate="True"
+                                 Visibility="{Binding IsScanning, Converter={StaticResource BoolToVisibilityConverter}}"
+                                 Margin="0,0,16,0"/>
+                    <!-- Admin indicator -->
+                    <Border Background="{DynamicResource SuccessBrush}" CornerRadius="3" Padding="6,2" Margin="0,0,12,0"
+                            Visibility="{Binding IsRunningAsAdmin, Converter={StaticResource BoolToVisibilityConverter}}"
+                            ToolTip="Running with administrator privileges - port tracking enabled">
+                        <TextBlock Text="Admin" Foreground="White" FontSize="10" FontWeight="SemiBold"/>
+                    </Border>
+                    <Border Background="{DynamicResource WarningBrush}" CornerRadius="3" Padding="6,2" Margin="0,0,12,0"
+                            Visibility="{Binding IsRunningAsAdmin, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Invert}"
+                            ToolTip="Running as standard user - port tracking will prompt for elevation">
+                        <TextBlock Text="User" Foreground="White" FontSize="10" FontWeight="SemiBold"/>
+                    </Border>
+                    <TextBlock Text="{Binding Devices.Count, StringFormat='{}{0} devices'}"
+                               Foreground="{DynamicResource SecondaryTextBrush}" VerticalAlignment="Center" Margin="0,0,16,0"/>
+                    <TextBlock Text="{Binding AppVersion, StringFormat='v{0}'}"
+                               Foreground="{DynamicResource SecondaryTextBrush}" VerticalAlignment="Center" Margin="0,0,16,0"
+                               ToolTip="Application version"/>
+                    <ToggleButton Content="{Binding IsDarkMode, Converter={StaticResource BoolToThemeTextConverter}}"
+                                  IsChecked="{Binding IsDarkMode, Mode=OneWay}"
+                                  Command="{Binding ToggleDarkModeCommand}"
+                                  Padding="8,2" MinWidth="70" FontSize="11"
+                                  ToolTip="Toggle between light and dark themes"/>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+    </Grid>
+</Window>

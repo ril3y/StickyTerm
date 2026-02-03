@@ -59,3 +59,19 @@ appsettings.local.json
 # Claude Code
 .claude/
 tmpclaude-*
+
+# Build outputs & artifacts
+Output/
+publish/
+
+# Test/dev publish folders
+test-publish/
+test-publish2/
+msix-publish/
+
+# MSIX certificates
+*.pfx
+
+# Misc
+nul
+tools/

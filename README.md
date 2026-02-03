@@ -1,37 +1,39 @@
-# COM Port Manager
+# StickyTerm
 
-A Windows desktop GUI application for managing static COM port assignments for USB serial devices.
+Serial terminal with sticky COM port assignments for USB serial devices.
+
+A Windows desktop application that keeps your USB serial devices on consistent COM ports. Discovers USB serial devices, lets you bind device identities (VID/PID/Serial) to preferred COM ports, and applies bindings automatically via registry writes.
+
+[battlewithbytes.io/projects/stickyterm](https://battlewithbytes.io/projects/stickyterm)
 
 ## Features
+
+### Built-in Serial Terminal
+- Full-featured serial terminal with configurable baud rate, data bits, stop bits, parity, and flow control
+- ANSI color code support
+- Command history with up/down arrow keys
+- Hex mode for sending/receiving raw bytes
+- DTR/RTS control line toggles with CTS/DSR/CD status indicators
 
 ### Device Discovery
 - Automatically discovers all COM port devices (USB CDC, USB-UART bridges, Bluetooth SPP, etc.)
 - Displays device identity: VID, PID, USB serial number, instance path, friendly name, driver
 - Detects common chip families: FTDI, CP210x, CH340/CH341, Prolific, RP2040, STM32 CDC, Arduino, etc.
 - Visual indicator for device stability (green = has serial number, orange = unstable)
+- Device aliases for friendly naming
 
-### Rule-Based Port Binding
+### Sticky Port Assignments
+- One-click "Track This Port" to keep a device on its current COM port
 - Create rules to bind specific devices to preferred COM port numbers
-- Multiple match types:
-  - **VID+PID+Serial**: Most specific, stable across USB topology changes
-  - **VID+PID**: For devices without serial numbers (less stable)
-  - **Instance ID**: Match by PnP device ID pattern (supports wildcards)
-  - **Friendly Name**: Match by device name pattern (supports wildcards)
+- Multiple match types: VID+PID+Serial, VID+PID, Instance ID, Friendly Name
 - Priority-based rule matching when multiple rules could apply
-- Warnings for devices without serial numbers
+- Watch mode: automatically apply rules when devices are connected
 
-### Rule Application
-- Apply rules manually or automatically on device connection
-- Write PortName to device registry key
-- Optional device restart (disable/enable) after port change
-- Dry-run mode to preview changes without applying
-
-### Watch Mode
-- Monitor for device connection/disconnection events
-- Automatically apply matching rules when devices are connected
-
-### Data Management
-- Rules and settings persisted to JSON files in %LocalAppData%\ComPortManager
+### Additional Features
+- System tray integration with minimize-to-tray
+- Windows startup support via Task Scheduler (with admin privileges)
+- Optional HTTP REST API for AI coding assistants to query port information
+- Dark and light themes
 - Import/export rules for backup or sharing
 - Daily log files with configurable retention
 
@@ -44,46 +46,38 @@ A Windows desktop GUI application for managing static COM port assignments for U
 ## Building
 
 ```bash
-dotnet build ComPortManager/ComPortManager.csproj
+dotnet build StickyTerm.sln
+```
+
+## Running Tests
+
+```bash
+dotnet test StickyTerm.Tests/StickyTerm.Tests.csproj
 ```
 
 ## Usage
 
-1. **Scan**: Click "Scan" to discover all COM port devices
-2. **Select Device**: Choose a device from the list to view details
-3. **Create Rule**: Select a target COM port and click "Create Rule"
-4. **Apply**: Click "Apply All" to apply all matching rules, or select a specific rule and device and click "Apply"
-5. **Watch Mode**: Enable to auto-apply rules when devices connect
-
-### Important Notes
-
-- Devices without a USB serial number may not maintain stable COM port assignments
-- After applying a rule, you may need to unplug/replug the device for the change to take effect
-- Use "Watch Mode" for persistent environments where devices are frequently connected/disconnected
+1. **Scan**: Devices are discovered automatically on startup
+2. **Select Device**: Choose a device from the Port Manager tab
+3. **Track**: Click "Track This Port" to keep the device on its current COM port
+4. **Terminal**: Use the Terminal tab for serial communication
+5. **Watch Mode**: Always active - rules are applied automatically when devices connect
 
 ## Project Structure
 
 ```
-ComPortManager/
+StickyTerm/
   Models/           - Data models (ComDevice, PortRule, AppSettings, etc.)
   Services/         - Business logic services
-    IDeviceEnumerationService.cs    - Device discovery interface
-    WmiDeviceEnumerationService.cs  - WMI-based device enumeration
-    IRegistryService.cs             - Registry access interface
-    RegistryService.cs              - COM port registry operations
-    IDeviceManagerService.cs        - Device enable/disable interface
-    DeviceManagerService.cs         - SetupAPI-based device management
-    IRuleService.cs                 - Rule management interface
-    RuleService.cs                  - Rule matching and application
-    IPersistenceService.cs          - Data persistence interface
-    PersistenceService.cs           - JSON file storage
-    ILoggingService.cs              - Logging interface
-    LoggingService.cs               - File-based logging
   ViewModels/       - MVVM view models
-  Views/            - XAML views
+  Views/            - XAML views and dialogs
   Converters/       - WPF value converters
+  Themes/           - Dark and light theme resources
+  Helpers/          - Utility classes
+StickyTerm.Tests/   - xUnit test project
+Installer/          - Inno Setup installer script
 ```
 
 ## License
 
-MIT
+MIT - see [LICENSE](LICENSE)

@@ -1,0 +1,38 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore StickyTerm.sln
+
+    - name: Run tests
+      run: dotnet test StickyTerm.Tests/StickyTerm.Tests.csproj --configuration Release --verbosity normal
+
+    - name: Publish self-contained executable
+      run: dotnet publish StickyTerm/StickyTerm.csproj -c Release -r win-x64 --self-contained true -o publish
+
+    - name: Create zip archive
+      run: Compress-Archive -Path publish\* -DestinationPath StickyTerm-${{ github.ref_name }}-win-x64.zip
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v2
+      with:
+        files: StickyTerm-${{ github.ref_name }}-win-x64.zip
+        generate_release_notes: true

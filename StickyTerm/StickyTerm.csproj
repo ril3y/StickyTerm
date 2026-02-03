@@ -1,0 +1,61 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows10.0.17763.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Resources\app.ico</ApplicationIcon>
+    <AssemblyName>StickyTerm</AssemblyName>
+    <RootNamespace>StickyTerm</RootNamespace>
+    <Version>1.1.0</Version>
+    <Authors>StickyTerm</Authors>
+    <Description>StickyTerm - Serial terminal with sticky COM port assignments. Keep your USB serial devices on consistent ports.</Description>
+    <Platforms>x64;AnyCPU</Platforms>
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+    <!-- Use custom Program.Main entry point instead of auto-generated -->
+    <EnableDefaultApplicationDefinition>false</EnableDefaultApplicationDefinition>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+    <PackageReference Include="System.Management" Version="8.0.0" />
+    <PackageReference Include="System.IO.Ports" Version="8.0.0" />
+    <PackageReference Include="H.NotifyIcon.Wpf" Version="2.1.3" />
+    <PackageReference Include="TaskScheduler" Version="2.11.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\app.ico" />
+  </ItemGroup>
+
+  <!--
+    Embed the application manifest into the apphost executable.
+    This is required for UAC elevation (requireAdministrator) to work in .NET Core/5+ applications.
+    The ApplicationManifest property only embeds the manifest in the DLL, not the native apphost EXE.
+    Windows UAC reads the manifest from the EXE, so we must embed it there using mt.exe.
+  -->
+  <Target Name="EmbedManifestInAppHost" AfterTargets="Build" Condition="'$(ApplicationManifest)' != '' and Exists('$(OutputPath)$(AssemblyName).exe')">
+    <PropertyGroup>
+      <!-- Find Windows SDK mt.exe - try common locations -->
+      <WindowsSdkBinPath Condition="Exists('$(WindowsSdkDir)bin\$(WindowsSDKVersion)x64\mt.exe')">$(WindowsSdkDir)bin\$(WindowsSDKVersion)x64\</WindowsSdkBinPath>
+      <WindowsSdkBinPath Condition="'$(WindowsSdkBinPath)' == '' and Exists('C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64\mt.exe')">C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64\</WindowsSdkBinPath>
+      <WindowsSdkBinPath Condition="'$(WindowsSdkBinPath)' == '' and Exists('C:\Program Files (x86)\Windows Kits\10\bin\10.0.19041.0\x64\mt.exe')">C:\Program Files (x86)\Windows Kits\10\bin\10.0.19041.0\x64\</WindowsSdkBinPath>
+      <WindowsSdkBinPath Condition="'$(WindowsSdkBinPath)' == '' and Exists('C:\Program Files (x86)\Windows Kits\10\bin\10.0.18362.0\x64\mt.exe')">C:\Program Files (x86)\Windows Kits\10\bin\10.0.18362.0\x64\</WindowsSdkBinPath>
+      <MtExePath>$(WindowsSdkBinPath)mt.exe</MtExePath>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(MtExePath)')" Text="Cannot find mt.exe in Windows SDK. Please ensure Windows SDK is installed." />
+    <Exec Command="&quot;$(MtExePath)&quot; -manifest &quot;$(ProjectDir)$(ApplicationManifest)&quot; -outputresource:&quot;$(OutputPath)$(AssemblyName).exe&quot;;#1" />
+    <Message Importance="high" Text="Embedded UAC manifest into $(AssemblyName).exe" />
+  </Target>
+
+</Project>
